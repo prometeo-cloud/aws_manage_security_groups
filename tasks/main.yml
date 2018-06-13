@@ -1,0 +1,22 @@
+---
+- name: Create Security Groups
+  include_tasks: create_security_group.yml
+  with_items: "{{ aws_sec_grps }}"
+  loop_control:
+    loop_var: sec_grp
+  when: (arg_action is not defined) or (arg_action != 'delete')
+
+- block:
+    - name: Remove Security Group rules
+      include_tasks: remove_rules.yml
+      with_items: "{{ aws_sec_grps }}"
+      loop_control:
+        loop_var: sec_grp
+
+    - name: Delete Security Groups
+      include_tasks: delete_security_group.yml
+      with_items: "{{ aws_sec_grps }}"
+      loop_control:
+        loop_var: sec_grp
+  when: (arg_action is defined) and (arg_action == 'delete')
+...

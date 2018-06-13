@@ -1,0 +1,19 @@
+---
+- name: Get security group {{ sec_grp.aws_sec_grp_name }} facts
+  include_tasks: get_security_group_facts.yml
+  vars:
+    sec_grp_tag: "{{ sec_grp.aws_sec_grp_name }}"
+
+- name: Remove any inbound or outbound rules from {{ sec_grp.aws_sec_grp_name }}
+  ec2_group:
+    aws_access_key: "{{ aws_access_key | default(omit) }}"
+    aws_secret_key: "{{ aws_secret_key | default(omit) }}"
+    name: "{{ sec_grp.aws_sec_grp_name }}"
+    description: "{{ sec_grp.aws_sec_grp_desc }}"
+    region: "{{ sec_grp.aws_sec_grp_region }}"
+    rules:
+      - ""
+    rules_egress:
+      - ""
+  when: sec_grp_facts.security_groups != []
+...

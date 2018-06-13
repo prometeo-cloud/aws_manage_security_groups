@@ -1,0 +1,7 @@
+---
+- name: Get security group {{ sec_grp_tag }} facts
+  ec2_group_facts:
+    filters:
+      "tag:Name": "{{ sec_grp_tag | upper }}"
+  register: sec_grp_facts
+...

@@ -1,0 +1,38 @@
+---
+# Default region: see http://docs.aws.amazon.com/general/latest/gr/rande.html#ec2_region
+aws_sec_grp_region: "{{ aws_region | default('eu-west-2') }}"
+
+aws_sec_grp_rules:
+  - proto: tcp
+    from_port: 22
+    to_port: 22
+    cidr_ip: 0.0.0.0/0
+  - proto: tcp
+    from_port: 80
+    to_port: 80
+    cidr_ip: 0.0.0.0/0
+  - proto: tcp
+    from_port: 3000
+    to_port: 3000
+    cidr_ip: 0.0.0.0/0
+  - proto: tcp
+    from_port: 8080
+    to_port: 8080
+    cidr_ip: 0.0.0.0/0
+  - proto: tcp
+    from_port: 8081
+    to_port: 8081
+    cidr_ip: 0.0.0.0/0
+  - proto: tcp
+    from_port: 3306
+    to_port: 3306
+    cidr_ip: 0.0.0.0/0
+  - proto: tcp
+    from_port: 9000
+    to_port: 9000
+    cidr_ip: 0.0.0.0/0
+
+aws_sec_grp_egress:
+  - proto: all
+    cidr_ip: 0.0.0.0/0
+...

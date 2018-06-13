@@ -1,0 +1,33 @@
+---
+- name: Get VPC {{ sec_grp.aws_sec_grp_vpc }} facts
+  include_role:
+    name: "aws_manage_vpc"
+    tasks_from: "get_vpc_facts"
+  vars:
+    vpc_tag: "{{ sec_grp.aws_sec_grp_vpc }}"
+
+# Ansible ec2_group module is not idempotent - need to check if it already exists
+- name: Get security group {{ sec_grp.aws_sec_grp_name }} facts
+  include_tasks: get_security_group_facts.yml
+  vars:
+    sec_grp_tag: "{{ sec_grp.aws_sec_grp_name }}"
+
+- name: Create Security Group
+  block:
+    - name: Set resource name
+      set_fact:
+        resource_name: "{{ sec_grp.aws_sec_grp_name | upper }}"
+
+    - name: Create security group {{ sec_grp.aws_sec_grp_name }}
+      ec2_group:
+        aws_access_key: "{{ aws_access_key | default(omit) }}"
+        aws_secret_key: "{{ aws_secret_key | default(omit) }}"
+        name: "{{ sec_grp.aws_sec_grp_name }}"
+        description: "{{ sec_grp.aws_sec_grp_desc }}"
+        region: "{{ sec_grp.aws_sec_grp_region }}"
+        rules: "{{ sec_grp.aws_sec_grp_rules | default('') }}"
+        rules_egress: "{{ sec_grp.aws_sec_grp_egress | default('') }}"
+        vpc_id: "{{ vpc_net_facts.vpcs[0].id }}"
+        tags: "{{ resource_tags }}"
+  when: (sec_grp_facts.security_groups == []) or (sec_grp.aws_sec_grp_update is defined)
+...

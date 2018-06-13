@@ -1,0 +1,13 @@
+---
+- name: Get security group {{ sec_grp.aws_sec_grp_name }} facts
+  include_tasks: get_security_group_facts.yml
+  vars:
+    sec_grp_tag: "{{ sec_grp.aws_sec_grp_name }}"
+
+- name: Delete security group {{ sec_grp.aws_sec_grp_name }}
+  ec2_group:
+    group_id: "{{ sec_grp_facts.security_groups[0].group_id }}"
+    state: absent
+  ignore_errors: true
+  when: sec_grp_facts.security_groups != []
+...
